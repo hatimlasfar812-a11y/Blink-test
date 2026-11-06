@@ -1,96 +1,208 @@
 import { auth, db } from "./firebase.js";
 import {
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup, // 👈 استخدمنا Popup بدلاً من Redirect
   RecaptchaVerifier,
   signInWithPhoneNumber,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
+/* =========================================
+   STATE & DOM
+========================================= */
 const googleLogin = document.getElementById("googleLogin");
+const phoneLogin = document.getElementById("phoneLogin");
+const phoneForm = document.getElementById("phoneForm");
+const phoneInput = document.getElementById("phoneInput");
+const sendCodeBtn = document.getElementById("sendCodeBtn");
+const cancelPhoneBtn = document.getElementById("cancelPhoneBtn");
 const errorMessage = document.getElementById("errorMessage");
 
+let confirmationResult = null;
+let recaptchaVerifier = null;
 let isRouting = false;
+let isSendingCode = false;
 
-function showError(msg) {
-  if (!errorMessage) return alert(msg); // سيظهر تنبيه إذا لم يجد العنصر
-  errorMessage.textContent = msg;
-  errorMessage.style.display = "block";
+/* =========================================
+   ERROR HANDLING
+========================================= */
+function showError(message) {
+  if (errorMessage) {
+    errorMessage.textContent = message;
+    errorMessage.classList.remove("hidden");
+    errorMessage.style.display = "block";
+  } else {
+    alert(message); // في حال لم يجد العنصر، سيظهر تنبيه
+  }
 }
 
-// دالة التوجيه
+function hideError() {
+  if (errorMessage) {
+    errorMessage.textContent = "";
+    errorMessage.classList.add("hidden");
+    errorMessage.style.display = "none";
+  }
+}
+
+/* =========================================
+   ROUTING
+========================================= */
 async function redirectUser(user) {
   if (!user || isRouting) return;
   isRouting = true;
+
   try {
     const userRef = doc(db, "users", user.uid);
     const userSnapshot = await getDoc(userRef);
-    
-    // إذا كان المستخدم جديداً، أنشئ له حساب زبون
+
     if (!userSnapshot.exists()) {
-        await setDoc(userRef, {
-            uid: user.uid, name: user.displayName || "", email: user.email || "",
-            role: "customer", createdAt: serverTimestamp()
-        });
+      // إنشاء حساب زبون جديد إذا لم يكن موجوداً
+      await setDoc(userRef, {
+        uid: user.uid,
+        name: user.displayName || "",
+        email: user.email || "",
+        phone: user.phoneNumber || "",
+        photoURL: user.photoURL || "",
+        role: "customer",
+        createdAt: serverTimestamp()
+      });
     } else {
-        // إذا كان سائق، وجهه لتطبيق السائق
-        if (userSnapshot.data().role === "driver") {
-            window.location.replace("driver.html");
-            return;
-        }
+      const userData = userSnapshot.data();
+      if (userData.role === "driver") {
+        window.location.replace("driver.html");
+        return;
+      }
     }
-    // التوجيه الافتراضي (للزبائن)
+
     window.location.replace("index.html");
+
   } catch (error) {
-    console.error("Routing Error:", error);
-    showError("حدث خطأ في قاعدة البيانات: " + error.message);
+    console.error("Routing error:", error);
+    showError("خطأ في قاعدة البيانات: " + error.message);
     isRouting = false;
   }
 }
 
-// 1. تسجيل الدخول بجوجل
-googleLogin?.addEventListener("click", async () => {
+/* =========================================
+   GOOGLE LOGIN (POPUP)
+========================================= */
+async function loginWithGoogle() {
+  hideError();
+  if (!googleLogin) return;
+
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+
+  // تغيير شكل الزر
+  const originalHTML = googleLogin.innerHTML;
+  googleLogin.disabled = true;
+  googleLogin.innerHTML = `<span>جاري الاتصال...</span>`;
+
   try {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithRedirect(auth, provider);
+    // استخدام Popup بدلاً من Redirect لسهولة التقاط الأخطاء
+    const result = await signInWithPopup(auth, provider);
+    
+    // نجاح تسجيل الدخول
+    if (result && result.user) {
+      await redirectUser(result.user);
+    }
+
   } catch (error) {
-    console.error(error);
-    showError("فشل الاتصال بجوجل: " + error.message);
+    console.error("Google Login Error:", error);
+    
+    // عرض الخطأ بوضوح
+    let msg = error.message;
+    if (error.code === 'auth/popup-blocked') {
+      msg = "المتصفح منع النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.";
+    } else if (error.code === 'auth/unauthorized-domain') {
+      msg = "هذا النطاق غير مصرح به في Firebase. أضف النطاق في Authorized Domains.";
+    } else if (error.code === 'auth/operation-not-allowed') {
+      msg = "تسجيل الدخول بجوجل غير مفعل في Firebase.";
+    }
+    
+    showError("خطأ جوجل: " + msg);
+    alert("سبب المشكلة: " + msg); // تنبيه إجباري لتراه فوراً
+    
+    // إرجاع الزر لحالته
+    googleLogin.disabled = false;
+    googleLogin.innerHTML = originalHTML;
+  }
+}
+
+if (googleLogin) {
+  googleLogin.addEventListener("click", loginWithGoogle);
+}
+
+/* =========================================
+   AUTH STATE
+========================================= */
+onAuthStateChanged(auth, async (user) => {
+  if (user && !isRouting) {
+    await redirectUser(user);
   }
 });
 
-// 2. استقبال النتيجة بعد العودة من جوجل
-async function handleGoogleRedirect() {
-  try {
-    console.log("Checking redirect result...");
-    const result = await getRedirectResult(auth);
-    
-    if (result && result.user) {
-      console.log("User found from redirect:", result.user.email);
-      await redirectUser(result.user);
-    } else {
-      console.log("No redirect result found (normal if arriving normally).");
-    }
-  } catch (error) {
-    console.error("Redirect Error:", error);
-    // سيعرض لك الخطأ الحقيقي على الشاشة
-    showError("خطأ العودة من جوجل: " + error.message + " (Code: " + error.code + ")");
-  }
+/* =========================================
+   PHONE LOGIN (Unchanged)
+========================================= */
+function initializeRecaptcha() {
+  if (recaptchaVerifier) return recaptchaVerifier;
+  const container = document.getElementById("recaptcha-container");
+  if (!container) throw new Error("recaptcha-container element not found.");
+
+  recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+    size: "invisible",
+    callback: () => console.log("reCAPTCHA verified."),
+  });
+  return recaptchaVerifier;
 }
 
-// 3. المستمع لحالة الدخول
-async function initializeLogin() {
-  await handleGoogleRedirect(); // يجب أن يعمل أولاً
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user && !isRouting) {
-      console.log("Auth state changed, user is:", user.email);
-      await redirectUser(user);
-    }
+if (phoneLogin && phoneForm) {
+  phoneLogin.addEventListener("click", () => {
+    hideError();
+    phoneForm.classList.remove("hidden");
+    if (phoneInput) phoneInput.focus();
   });
 }
 
-initializeLogin();
+if (cancelPhoneBtn && phoneForm) {
+  cancelPhoneBtn.addEventListener("click", () => {
+    phoneForm.classList.add("hidden");
+    hideError();
+  });
+}
+
+if (sendCodeBtn) {
+  sendCodeBtn.addEventListener("click", async () => {
+    if (isSendingCode) return;
+    hideError();
+    const phone = phoneInput.value.trim();
+    if (!phone) return showError("أدخل رقم الهاتف");
+
+    isSendingCode = true;
+    const originalHTML = sendCodeBtn.innerHTML;
+    sendCodeBtn.disabled = true;
+    sendCodeBtn.innerHTML = `<span>جاري الإرسال...</span>`;
+
+    try {
+      const verifier = initializeRecaptcha();
+      confirmationResult = await signInWithPhoneNumber(auth, phone, verifier);
+      
+      const code = prompt("أدخل رمز التحقق الذي وصلك:");
+      if (!code) return;
+
+      const result = await confirmationResult.confirm(code);
+      if (result && result.user) {
+        await redirectUser(result.user);
+      }
+    } catch (error) {
+      console.error(error);
+      showError("خطأ الهاتف: " + error.message);
+    } finally {
+      isSendingCode = false;
+      sendCodeBtn.disabled = false;
+      sendCodeBtn.innerHTML = originalHTML;
+    }
+  });
+}

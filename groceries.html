@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+    <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Supermarchés & Epiceries - Quickly</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="groceries.css">
+</head>
+<body>
+
+  <!-- GLOBAL HEADER -->
+  <header class="global-header">
+    <div class="header-container">
+      <button class="back-btn" id="backBtn" aria-label="Retour">
+        <i data-lucide="arrow-left"></i>
+      </button>
+
+      <div class="logo-area" style="font-size: 20px; font-weight: 900; color: #0878D1; cursor: pointer;" onclick="window.location.href='index.html'">
+        Quickly
+      </div>
+
+      <a href="cart.html" class="action-item" style="position: relative;">
+        <i data-lucide="shopping-bag"></i>
+        <span id="cartBadge" class="cart-badge" style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; font-size: 9px; font-weight: 900; padding: 2px 5px; border-radius: 10px;" hidden>0</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-content">
+    
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">Supermarchés & Courses 🛒</h1>
+
+    <!-- SEARCH BAR -->
+    <section class="search-section">
+      <div class="search-box">
+        <i data-lucide="search" style="color: #64748b; margin-right: 8px;"></i>
+        <input type="text" id="searchInput" placeholder="Rechercher un magasin, une ville..." autocomplete="off">
+      </div>
+    </section>
+
+    <!-- TOOLBAR INFO -->
+    <div class="toolbar-info">
+      <span>Magasins disponibles</span>
+      <span id="countInfo">Chargement...</span>
+    </div>
+
+    <!-- STORES GRID -->
+    <section class="stores-grid" id="storesGrid">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT MODULE -->
+  <script type="module" src="groceries.js"></script>
+</body>
+</html>

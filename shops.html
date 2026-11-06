@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <script src="core.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quickly – المتاجر والتسوق</title>
+
+    <!-- Cairo font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="shops.css">
+</head>
+<body>
+
+    <!-- ============ HEADER (مطابق للصفحة الرئيسية) ============ -->
+    <header class="app-header">
+        <!-- الصف العلوي: القائمة، الشعار، الحساب -->
+        <div class="header-top-row">
+            <button class="icon-btn-header" id="menuToggleBtn" aria-label="القائمة">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="header-brand-logo">
+                <a href="index.html">
+                    <img src="Quickly1.png" alt="Quickly" onerror="this.style.display='none'; document.getElementById('logoFallbackText').style.display='block';">
+                    <span id="logoFallbackText" style="display:none;">QUICKLY</span>
+                </a>
+            </div>
+            <div class="header-actions-right">
+                <a href="profile.html" id="userProfileLink" class="header-profile-link">
+                    <img id="userProfileImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="البروفايل" class="user-avatar-img">
+                </a>
+            </div>
+        </div>
+
+        <!-- شريط العنوان -->
+        <a href="addresses.html" class="location-bar" id="locationBar">
+            <i class="fa-solid fa-location-dot"></i>
+            <div class="location-bar-text">
+                <small>التوصيل إلى</small>
+                <strong id="locationText">اختر عنوانك...</strong>
+            </div>
+            <i class="fa-solid fa-chevron-down location-caret"></i>
+        </a>
+
+        <!-- شريط البحث + الفلتر -->
+        <div class="search-container-box">
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="search" id="shopSearchInput" class="main-search-input" placeholder="ابحث عن متجر..." autocomplete="off">
+                <button type="button" id="clearSearchBtn" class="clear-search-btn hidden" aria-label="مسح البحث">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button class="filter-action-btn" id="openFilterBtn" aria-label="الفلترة">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="shops-container">
+        <!-- قائمة المتاجر -->
+        <div id="shopsListView">
+            <div class="section-title-box">
+                <div>
+                    <h1>المتاجر</h1>
+                    <p>تسوق من المحلات القريبة منك</p>
+                </div>
+                <div class="section-icon" aria-hidden="true">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="categories-scroll-row">
+                <button class="cat-pill active" data-category="all"><i class="fa-solid fa-border-all"></i> <span>الكل</span></button>
+                <button class="cat-pill" data-category="fashion"><i class="fa-solid fa-shirt"></i> <span>أزياء</span></button>
+                <button class="cat-pill" data-category="electronics"><i class="fa-solid fa-laptop"></i> <span>إلكترونيات</span></button>
+                <button class="cat-pill" data-category="perfume"><i class="fa-solid fa-spray-can-sparkles"></i> <span>عطور</span></button>
+                <button class="cat-pill" data-category="accessories"><i class="fa-solid fa-gem"></i> <span>إكسسوارات</span></button>
+                <button class="cat-pill" data-category="home"><i class="fa-solid fa-house-chimney"></i> <span>منزل وديكور</span></button>
+                <button class="cat-pill" data-category="sports"><i class="fa-solid fa-dumbbell"></i> <span>رياضة</span></button>
+                <button class="cat-pill" data-category="gifts"><i class="fa-solid fa-gift"></i> <span>هدايا</span></button>
+                <button class="cat-pill" data-category="other"><i class="fa-solid fa-ellipsis"></i> <span>أخرى</span></button>
+            </div>
+
+            <!-- Shops section -->
+            <div class="shops-section">
+                <div class="section-header">
+                    <h3 id="shopsSectionTitle">المتاجر المميزة</h3>
+                </div>
+                <div id="shopsGridContainer" class="shops-grid" aria-live="polite" aria-busy="true">
+                    <div class="loading-box">
+                        <i class="fa-solid fa-circle-notch spinner-icon"></i>
+                        <p>جاري جلب المتاجر...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تفاصيل المتجر -->
+        <div id="storeDetailsView" class="hidden-view">
+            <button onclick="window.location.href='shops.html'" class="back-btn">
+                <i class="fa-solid fa-arrow-right"></i> العودة للمتاجر
+            </button>
+            <div id="storeHeroContainer" class="store-hero">
+                <div class="loading-box">
+                    <i class="fa-solid fa-circle-notch spinner-icon"></i>
+                    <p>جاري تحميل تفاصيل المتجر...</p>
+                </div>
+            </div>
+            <h3 class="section-title-small">منتجات المتجر</h3>
+            <div id="storeProductsGrid" class="products-grid">
+                <div class="loading-box products-empty-span">
+                    <p class="muted-small">جاري جلب المنتجات...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============ BOTTOM NAVIGATION ============ -->
+    <nav class="bottom-nav-bar">
+        <a href="index.html" class="nav-bar-item">
+            <i class="fa-solid fa-house"></i><span>الرئيسية</span>
+        </a>
+        <a href="search.html" class="nav-bar-item active">
+            <i class="fa-solid fa-compass"></i><span>استكشاف</span>
+        </a>
+        <a href="cart.html" class="nav-bar-item cart-highlight-item">
+            <div class="cart-icon-container">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-badge-counter" id="cartBadgeCount" style="display:none;">0</span>
+            </div>
+            <span>السلة</span>
+        </a>
+        <a href="profile.html" class="nav-bar-item">
+            <i class="fa-solid fa-circle-user"></i><span>حسابي</span>
+        </a>
+    </nav>
+
+    <!-- ============ SIDE DRAWER ============ -->
+    <div class="drawer-overlay hidden" id="drawerOverlay"></div>
+    <aside class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <div class="drawer-brand-area">
+                <h3 class="drawer-title">خدماتنا</h3>
+                <p class="drawer-subtitle">تنقل سريع</p>
+            </div>
+            <button class="drawer-close-btn" id="closeDrawerBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <nav class="drawer-menu-list">
+            <a href="index.html" class="drawer-item"><i class="fa-solid fa-house"></i> <span>الرئيسية</span></a>
+            <div class="drawer-divider"></div>
+            <a href="food.html?category=all" class="drawer-item"><i class="fa-solid fa-utensils"></i> <span>المطاعم والطعام</span></a>
+            <a href="groceries.html" class="drawer-item"><i class="fa-solid fa-basket-shopping"></i> <span>البقالة</span></a>
+            <a href="shops.html" class="drawer-item active"><i class="fa-solid fa-store"></i> <span>المتاجر</span></a>
+            <a href="food.html?category=package" class="drawer-item"><i class="fa-solid fa-box"></i> <span>الطرود</span></a>
+            <a href="food.html?category=parapharmacy" class="drawer-item"><i class="fa-solid fa-stethoscope"></i> <span>الصيدلية</span></a>
+            <div class="drawer-divider"></div>
+            <a href="search.html" class="drawer-item"><i class="fa-solid fa-compass"></i> <span>البحث والاستكشاف</span></a>
+        </nav>
+    </aside>
+
+    <!-- ============ FILTER MODAL ============ -->
+    <div class="modal-overlay-backdrop hidden" id="filterModal">
+        <div class="modal-card-sheet">
+            <div class="modal-sheet-header">
+                <h3>خيارات الفلترة</h3>
+                <button class="close-sheet-btn" id="closeFilterModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-sheet-body" id="filterModalBody"></div>
+        </div>
+    </div>
+
+    <!-- ============ TOAST ============ -->
+    <div id="toast-container" role="status" aria-live="polite"></div>
+
+    <script type="module" src="shops.js?v=6"></script>
+</body>
+</html>

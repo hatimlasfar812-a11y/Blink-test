@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Quickly - Détails de la Commande</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="./order-details.css">
+</head>
+<body>
+  
+  <header class="header">
+    <button id="backBtn" class="back-btn" aria-label="Retour">
+      <i data-lucide="arrow-left"></i>
+    </button>
+    <h2 data-i18n="page_title">Détails de la commande</h2>
+  </header>
+  
+  <div class="container" id="mainContainer">
+    
+    <!-- Restaurant & Status -->
+    <div class="card">
+      <h3 id="restaurantName">...</h3>
+      <p id="orderNumber" data-i18n="order_num">Commande #...</p>
+      <span id="orderStatus" class="status badge-pending"></span>
+    </div>
+    
+    <!-- Items -->
+    <div class="card">
+      <h3 data-i18n="items_title">Articles commandés</h3>
+      <div id="itemsContainer"></div>
+    </div>
+    
+    <!-- Address -->
+    <div class="card">
+      <h3 data-i18n="address_title">Adresse de livraison</h3>
+      <div id="addressContainer" class="address-box">
+        <p>Chargement...</p>
+      </div>
+    </div>
+    
+    <!-- Payment -->
+    <div class="card">
+      <h3 data-i18n="payment_title">Méthode de paiement</h3>
+      <p id="paymentMethod" class="payment-box"></p>
+    </div>
+    
+    <!-- Price Summary -->
+    <div class="card">
+      <h3 data-i18n="summary_title">Résumé du paiement</h3>
+      
+      <div class="summary-row">
+        <span data-i18n="subtotal">Sous-total</span>
+        <span id="subtotal">0.00 DH</span>
+      </div>
+      
+      <div class="summary-row">
+        <span data-i18n="delivery_fee">Frais de livraison</span>
+        <span id="deliveryFee">0.00 DH</span>
+      </div>
+      
+      <div class="summary-row">
+        <span data-i18n="service_fee">Frais de service</span>
+        <span id="serviceFee">0.00 DH</span>
+      </div>
+      
+      <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;">
+      
+      <div class="summary-total">
+        <span data-i18n="total">Total</span>
+        <span id="totalPrice">0.00 DH</span>
+      </div>
+    </div>
+    
+    <!-- Timeline -->
+    <div class="card">
+      <h3 data-i18n="timeline_title">Suivi de la commande</h3>
+      <div class="timeline">
+        <div class="step" id="stepPlaced">
+          <div class="circle"></div>
+          <span data-i18n="status_placed">Commande validée</span>
+        </div>
+        <div class="step" id="stepPreparing">
+          <div class="circle"></div>
+          <span data-i18n="status_preparing">En cours de préparation</span>
+        </div>
+        <div class="step" id="stepDriver">
+          <div class="circle"></div>
+          <span data-i18n="status_driver">Livreur assigné</span>
+        </div>
+        <div class="step" id="stepWay">
+          <div class="circle"></div>
+          <span data-i18n="status_way">En route vers vous</span>
+        </div>
+        <div class="step" id="stepDelivered">
+          <div class="circle"></div>
+          <span data-i18n="status_delivered">Livré avec succès</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Support -->
+    <div class="card">
+      <h3 data-i18n="help_title">Besoin d'aide ?</h3>
+      <button id="supportBtn" class="support-btn" onclick="window.open('https://wa.me/212000000000', '_blank')">
+        <i data-lucide="headset"></i> <span data-i18n="contact_support">Contacter le support</span>
+      </button>
+    </div>
+    
+    <!-- Track Button -->
+    <button id="trackBtn" class="track-btn">
+      <i data-lucide="map-pin"></i> <span data-i18n="track_live">Suivre sur la carte en direct</span>
+    </button>
+    
+  </div>
+  
+  <script type="module" src="order-details.js"></script>
+</body>
+</html>

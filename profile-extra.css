@@ -1,0 +1,178 @@
+/* =====================================================
+   PROFILE — EXTRA (Header + Track Order + Toast + Icons)
+===================================================== */
+
+/* ===== Sub Header ===== */
+.sub-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.sub-header-bar h2 {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text-primary);
+    flex: 1;
+    text-align: center;
+}
+
+.back-nav-btn,
+.header-spacer {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.back-nav-btn {
+    border: none;
+    background: var(--surface-muted);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.back-nav-btn:active { background: var(--border); }
+
+.back-nav-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.header-spacer { display: block; }
+
+/* ===== Lucide icons defaults ===== */
+svg.lucide {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.8;
+    stroke: currentColor;
+    fill: none;
+    flex-shrink: 0;
+}
+
+.m-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.8;
+}
+
+.menu-item-right svg {
+    width: 18px;
+    height: 18px;
+}
+
+.logout-action-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+/* ===== VIP Badge ===== */
+.vip-badge-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.vip-badge-tag svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2;
+}
+
+/* ===== Active Order Badge ===== */
+.active-order-badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-full);
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.active-order-badge.hidden { display: none !important; }
+
+.active-order-badge.pulse-badge { animation: badgePulse 2s infinite; }
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ===== Toast ===== */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    width: calc(100% - 40px);
+    max-width: 400px;
+}
+
+.toast {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: toastSlideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+    color: #fff;
+}
+
+.toast svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+    flex-shrink: 0;
+}
+
+.toast.success { background: var(--primary); }
+.toast.error { background: var(--danger); }
+.toast.info { background: var(--text-primary); }
+
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .active-order-badge.pulse-badge,
+    .toast,
+    .modal-card-sheet { animation: none; }
+}

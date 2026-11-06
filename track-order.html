@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Quickly - Suivi de commande</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="track-order.css">
+</head>
+<body class="no-map">
+
+  <!-- Loader -->
+  <div id="appLoader" class="app-loader">
+    <div class="spinner"></div>
+    <p data-i18n="loading">Chargement de la commande…</p>
+  </div>
+
+  <!-- Header -->
+  <header class="header hidden" id="mainHeader">
+    <button id="backBtn" class="back-btn" type="button" aria-label="Retour">
+      <i data-lucide="arrow-left"></i>
+    </button>
+    <div class="header-title">
+      <h2 data-i18n="track_order">Suivi de commande</h2>
+      <small id="orderNumber">#—</small>
+    </div>
+    <span class="header-spacer" aria-hidden="true"></span>
+  </header>
+
+  <!-- Map -->
+  <div id="map" class="hidden"></div>
+  <button id="recenterBtn" class="recenter-btn hidden" type="button" aria-label="Recentrer">
+    <i data-lucide="locate-fixed"></i>
+  </button>
+
+  <!-- Error State -->
+  <div id="errorState" class="error-state hidden">
+    <i data-lucide="triangle-alert"></i>
+    <h3 data-i18n="not_found">Commande introuvable</h3>
+    <p data-i18n="not_found_sub">Vérifiez le lien ou contactez le support</p>
+    <a href="my-orders.html" class="btn-primary" data-i18n="my_orders">Mes Commandes</a>
+  </div>
+
+  <!-- Bottom Sheet -->
+  <div class="bottom-sheet hidden" id="bottomSheet">
+    <div class="handle" id="sheetHandle" role="button" tabindex="0" aria-label="Agrandir"></div>
+
+    <!-- Restaurant Header -->
+    <div class="sheet-header">
+      <div class="restaurant-info">
+        <h3 id="restaurantName">—</h3>
+        <p id="orderStatus" class="status-text" data-i18n="loading">Chargement…</p>
+      </div>
+      <span id="statusBadge" class="status-badge">
+        <span class="pulse-dot"></span>
+        <span id="statusBadgeText">—</span>
+      </span>
+    </div>
+
+    <!-- Cancelled -->
+    <div class="cancelled-box hidden" id="cancelledBox">
+      <i data-lucide="circle-x"></i>
+      <div>
+        <strong id="cancelledTitle" data-i18n="status_cancelled">Commande annulée</strong>
+        <small data-i18n="cancel_msg">Contactez le support si besoin</small>
+      </div>
+    </div>
+
+    <!-- ETA Card -->
+    <div class="eta-card" id="etaCard">
+      <div class="eta-icon">
+        <i data-lucide="timer"></i>
+      </div>
+      <div class="eta-info">
+        <span data-i18n="eta_title">Temps estimé</span>
+        <strong><span id="etaMinutes">—</span> <span id="etaUnit" data-i18n="eta_unit">min</span></strong>
+        <small id="etaNote" class="eta-note hidden"></small>
+      </div>
+      <div class="eta-bar">
+        <div class="eta-fill" id="etaFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" id="timeline"></div>
+
+    <!-- Driver Card -->
+    <div class="driver-card hidden" id="driverCard">
+      <div class="driver-avatar" id="driverAvatar">
+        <i data-lucide="bike"></i>
+      </div>
+      <div class="driver-info">
+        <span class="driver-label" data-i18n="driver">Livreur</span>
+        <h4 id="driverName">—</h4>
+        <div class="driver-meta">
+          <span class="rating hidden" id="ratingChip"><i data-lucide="star" style="width:12px;height:12px;fill:currentColor;"></i> <strong id="driverRating">—</strong></span>
+          <span id="driverVehicle" class="hidden"></span>
+        </div>
+      </div>
+      <div class="driver-actions">
+        <a href="#" class="icon-action-btn call disabled" id="callBtn" aria-label="Appeler">
+          <i data-lucide="phone"></i>
+        </a>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="icon-action-btn whatsapp disabled" id="whatsappBtn" aria-label="WhatsApp">
+          <i data-lucide="message-circle"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Restaurant Card -->
+    <div class="address-card hidden" id="placeCard">
+      <div class="address-header">
+        <i data-lucide="store"></i>
+        <h4 data-i18n="ordered_from">Commandé chez</h4>
+      </div>
+      <p id="placeName">—</p>
+      <a id="placeLink" href="#" target="_blank" rel="noopener noreferrer" class="place-link hidden">
+        <i data-lucide="navigation"></i>
+        <span data-i18n="view_map">Voir sur la carte</span>
+      </a>
+    </div>
+
+    <!-- Address Card -->
+    <div class="address-card">
+      <div class="address-header">
+        <i data-lucide="map-pin"></i>
+        <h4 data-i18n="address_title">Adresse de livraison</h4>
+      </div>
+      <p id="deliveryAddress">—</p>
+    </div>
+
+    <!-- Delivered Actions -->
+    <div class="delivered-actions hidden" id="deliveredActions">
+      <button type="button" class="btn-rate" id="rateBtn">
+        <i data-lucide="star"></i>
+        <span data-i18n="rate_exp">Noter l'expérience</span>
+      </button>
+      <a href="food.html" class="btn-secondary">
+        <i data-lucide="rotate-ccw"></i>
+        <span data-i18n="order_again">Commander à nouveau</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div id="ratingModal" class="modal-overlay hidden">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
+      <div class="modal-header">
+        <h3 id="ratingTitle" data-i18n="rate_title">Noter l'expérience</h3>
+        <button type="button" class="close-modal" data-close-rating aria-label="Fermer">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-question" data-i18n="rate_question">Comment était votre expérience ?</p>
+        <div class="stars-row" id="starsRow">
+          <button type="button" class="star-btn" data-value="1" aria-label="1"><i data-lucide="star"></i></button>
+          <button type="button" class="star-btn" data-value="2" aria-label="2"><i data-lucide="star"></i></button>
+          <button type="button" class="star-btn" data-value="3" aria-label="3"><i data-lucide="star"></i></button>
+          <button type="button" class="star-btn" data-value="4" aria-label="4"><i data-lucide="star"></i></button>
+          <button type="button" class="star-btn" data-value="5" aria-label="5"><i data-lucide="star"></i></button>
+        </div>
+        <p class="rating-label" id="ratingLabel" data-i18n="rate_choose">Choisir une note</p>
+        <textarea id="ratingComment" data-i18n-placeholder="rate_placeholder" placeholder="Partagez votre expérience (optionnel)" rows="3" maxlength="300"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" data-close-rating data-i18n="cancel">Annuler</button>
+        <button type="button" class="btn-save" id="submitRatingBtn">
+          <i data-lucide="send"></i>
+          <span data-i18n="send">Envoyer</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast & Confetti -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+  <div id="confettiContainer" class="confetti-container"></div>
+
+  <script type="module" src="track-order.js"></script>
+</body>
+</html>

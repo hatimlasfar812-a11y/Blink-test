@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  
+  <title>Quickly - Mes Commandes</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="my-orders.css">
+</head>
+<body>
+
+  <header class="header">
+    <button id="backBtn" class="back-btn" aria-label="Retour">
+      <i data-lucide="arrow-left"></i>
+    </button>
+    <h2 data-i18n="page_title">Mes Commandes</h2>
+  </header>
+
+  <div class="container">
+    <div id="ordersContainer" class="orders-list"></div>
+  </div>
+
+  <script type="module" src="my-orders.js?v=2"></script>
+</body>
+</html>

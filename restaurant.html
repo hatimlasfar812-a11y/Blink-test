@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <title>Restaurant - Quickly</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons بدلاً من Font Awesome -->
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="restaurant.css">
+  <link rel="stylesheet" href="menu.css">
+</head>
+
+<body>
+  
+  <div class="app">
+    
+    <header class="header">
+      <button id="backBtn" aria-label="Back">
+        <i data-lucide="arrow-left"></i>
+      </button>
+      
+      <button id="favoriteBtn" aria-label="Favorite">
+        <i data-lucide="heart" id="favIcon"></i>
+      </button>
+    </header>
+    
+    <section class="restaurant-header">
+      <div id="restaurantHero"></div>
+      <div id="restaurantInfo"></div>
+    </section>
+    
+    <section id="restaurantCategories" class="menu-tabs"></section>
+    <section id="restaurantMenu" class="menu-list"></section>
+    
+  </div>
+ 
+  <!-- Product Modal -->
+  <div class="product-modal" id="productModal">
+    <div class="product-sheet" id="productContent"></div>
+  </div>
+
+  <!-- Cart FAB -->
+  <a href="cart.html" class="cart-fab" id="cartFab" aria-label="Cart">
+    <i data-lucide="shopping-bag"></i>
+    <span class="cart-badge" id="cartBadge">0</span>
+  </a>  
+
+  <script type="module" src="restaurant.js"></script>
+  <script type="module" src="menu.js"></script>
+</body>
+</html>

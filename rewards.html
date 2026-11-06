@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Quickly - Récompenses</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="rewards.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- SUB HEADER -->
+    <header class="sub-header-bar">
+      <a href="index.html" class="back-nav-btn" aria-label="Retour">
+        <i data-lucide="arrow-left"></i>
+      </a>
+      <h2 data-i18n="page_title">Fidélité & Récompenses</h2>
+      <span class="header-spacer"></span>
+    </header>
+
+    <main class="main-content-scroll">
+
+      <!-- HERO POINTS CARD -->
+      <div class="rewards-hero-card">
+        <div class="rewards-hero-icon"><i data-lucide="crown"></i></div>
+        <div class="rewards-hero-info">
+          <span data-i18n="current_balance">Solde de Points Actuel</span>
+          <h1><span id="userPointsValue">0</span> <small data-i18n="pts">pts</small></h1>
+          <p data-i18n="vip_msg">Commandez régulièrement pour débloquer le niveau VIP</p>
+        </div>
+      </div>
+
+      <!-- TIER PROGRESS CARD -->
+      <div class="tier-progress-card">
+        <div class="tier-labels">
+          <span id="currentTierName" data-i18n="tier_bronze">Niveau Bronze</span>
+          <span id="nextTierTarget" data-i18n="next_tier">Prochain: Argent (500 pts)</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-bar" id="tierProgressBar" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- AVAILABLE REWARDS SECTION -->
+      <div class="section-title-bar">
+        <h2 data-i18n="avail_rewards">Récompenses Disponibles</h2>
+      </div>
+      
+      <div class="rewards-cards-list">
+        <!-- Reward 1 -->
+        <div class="reward-row-item">
+          <div class="r-icon-box"><i data-lucide="bike"></i></div>
+          <div class="r-details">
+            <h4 data-i18n="reward_delivery">Livraison Gratuite</h4>
+            <p data-i18n="reward_delivery_sub">Valable sur votre prochaine commande</p>
+            <span class="cost-pill"><span>50</span> <span data-i18n="pts">pts</span></span>
+          </div>
+          <button class="btn-redeem-action" data-redeem="Livraison Gratuite" data-cost="50" data-i18n="redeem">Échanger</button>
+        </div>
+
+        <!-- Reward 2 -->
+        <div class="reward-row-item">
+          <div class="r-icon-box"><i data-lucide="ticket"></i></div>
+          <div class="r-details">
+            <h4 data-i18n="reward_voucher">Bon d'achat 20 MAD</h4>
+            <p data-i18n="reward_voucher_sub">À utiliser dans tous les restaurants</p>
+            <span class="cost-pill"><span>100</span> <span data-i18n="pts">pts</span></span>
+          </div>
+          <button class="btn-redeem-action" data-redeem="Bon d'achat 20 MAD" data-cost="100" data-i18n="redeem">Échanger</button>
+        </div>
+
+        <!-- Reward 3 -->
+        <div class="reward-row-item">
+          <div class="r-icon-box"><i data-lucide="utensils"></i></div>
+          <div class="r-details">
+            <h4 data-i18n="reward_burger">Menu Burger Offert</h4>
+            <p data-i18n="reward_burger_sub">Offert par nos restaurants partenaires</p>
+            <span class="cost-pill"><span>200</span> <span data-i18n="pts">pts</span></span>
+          </div>
+          <button class="btn-redeem-action" data-redeem="Menu Burger Offert" data-cost="200" data-i18n="redeem">Échanger</button>
+        </div>
+      </div>
+
+      <!-- POINTS HISTORY SECTION -->
+      <div class="section-title-bar" style="margin-top: 24px;">
+        <h2 data-i18n="history_title">Historique des transactions</h2>
+      </div>
+      
+      <div class="points-history-container" id="pointsHistoryList">
+        <!-- History items will be injected here by JS -->
+        <div class="loading-skeleton">
+          <div class="sk-line w-60"></div>
+          <div class="sk-line w-40"></div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav-bar">
+      <a href="index.html" class="nav-bar-item">
+        <i data-lucide="house"></i>
+        <span data-i18n="nav_home">Accueil</span>
+      </a>
+      <a href="food.html" class="nav-bar-item">
+        <i data-lucide="compass"></i>
+        <span data-i18n="nav_explore">Explorer</span>
+      </a>
+      <a href="cart.html" class="nav-bar-item cart-highlight-item">
+        <div class="cart-icon-container">
+          <i data-lucide="shopping-bag"></i>
+          <span class="cart-badge-counter" id="cartBadgeCount" style="display:none;">0</span>
+        </div>
+        <span data-i18n="nav_cart">Panier</span>
+      </a>
+      <a href="profile.html" class="nav-bar-item">
+        <i data-lucide="circle-user"></i>
+        <span data-i18n="nav_profile">Profil</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- Toast for notifications -->
+  <div id="rewardsToast" class="toast-notification"></div>
+
+  <script type="module" src="rewards.js"></script>
+</body>
+</html>

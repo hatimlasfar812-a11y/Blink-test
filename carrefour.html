@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" id="htmlRoot">
+
+<head>
+  <meta charset="UTF-8">
+    <script src="core.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Carrefour - Quickly</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- مكتبة Lucide للأيقونات الاحترافية -->
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  
+  <link rel="stylesheet" href="carrefour.css">
+</head>
+
+<body>
+
+  <div class="app-container">
+
+    <!-- ============ HEADER ============ -->
+    <header class="app-header">
+      <div class="header-top-row">
+        <button class="icon-btn-header" id="menuToggleBtn" aria-label="Menu">
+          <i data-lucide="menu"></i>
+        </button>
+        <div class="header-brand-logo" onclick="window.location.href='index.html'" style="cursor:pointer;">
+          <img src="Quickly.png" alt="Quickly" onerror="this.style.display='none'; document.getElementById('logoFallbackText').style.display='block';">
+          <span id="logoFallbackText" style="display:none; font-size:22px; font-weight:900; color:#fff; letter-spacing:1px;">QUICKLY</span>
+        </div>
+        <div class="header-actions-right">
+          <button class="icon-btn-header settings-gear-btn" id="settingsBtn" aria-label="Paramètres">
+            <i data-lucide="settings"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- LOCATION BAR -->
+      <a href="addresses.html" class="location-bar">
+        <i data-lucide="map-pin"></i>
+        <div class="location-bar-text">
+          <small data-i18n="deliver_to">Livrer à</small>
+          <strong id="locationText">Carrefour Oujda</strong>
+        </div>
+        <i data-lucide="chevron-down" class="location-caret"></i>
+      </a>
+
+      <!-- SEARCH BAR -->
+      <div class="search-container-box">
+        <div class="search-input-wrapper">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="globalSearchInput" class="main-search-input" data-i18n-placeholder="search_placeholder" placeholder="Rechercher un produit..." autocomplete="off">
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="main-content-scroll">
+      
+      <!-- STORE HERO BANNER -->
+      <section class="store-hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-logo-box">
+            <img src="carrefour-logo.png" alt="Carrefour" class="hero-logo-img" onerror="this.style.display='none'; this.parentElement.querySelector('.logo-fallback').style.display='flex';">
+            <span class="logo-fallback">C</span>
+          </div>
+          <div class="hero-text-box">
+            <h1>Carrefour Oujda</h1>
+            <p data-i18n="hero_subtitle">Vos courses livrées chez vous</p>
+            <div class="hero-badges">
+              <span class="badge-rating"><i data-lucide="star" fill="currentColor"></i> 4.5</span>
+              <span class="badge-open hero-open"><i data-lucide="check-circle"></i> <span data-i18n="open">Ouvert</span></span>
+              <span><i data-lucide="clock"></i> 30-50 min</span>
+              <span><i data-lucide="truck"></i> 10 DH</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="store-layout">
+        <!-- SIDEBAR GAUCHE (Desktop) -->
+        <aside class="sidebar-left">
+          <div class="sidebar-header"><i data-lucide="layout-grid"></i> <span data-i18n="categories">Catégories</span></div>
+          <ul class="category-menu" id="categoryMenu">
+            <li style="padding:10px; color:#666;">Chargement...</li>
+          </ul>
+        </aside>
+
+        <!-- CONTENU CENTRAL -->
+        <section class="store-center">
+          <div class="mobile-categories-bar" id="mobileCategoriesBar"></div>
+
+          <!-- Toolbar -->
+          <div class="search-toolbar">
+            <div class="result-count" id="resultCount">Chargement...</div>
+            <select id="sortSelect" class="sort-select">
+              <option value="default" data-i18n="sort_relevance">Trier : Pertinence</option>
+              <option value="price-asc" data-i18n="sort_price_asc">Prix croissant</option>
+              <option value="price-desc" data-i18n="sort_price_desc">Prix décroissant</option>
+              <option value="name" data-i18n="sort_name">Nom (A-Z)</option>
+            </select>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="products-grid" id="productsGrid"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ============ BOTTOM NAVIGATION BAR ============ -->
+    <nav class="bottom-nav-bar">
+      <a href="index.html" class="nav-bar-item">
+        <i data-lucide="house"></i>
+        <span data-i18n="nav_home">Accueil</span>
+      </a>
+      <a href="search.html" class="nav-bar-item">
+        <i data-lucide="compass"></i>
+        <span data-i18n="nav_explore">Explorer</span>
+      </a>
+      <a href="cart.html" class="nav-bar-item cart-highlight-item">
+        <div class="cart-icon-container">
+          <i data-lucide="shopping-bag"></i>
+          <span class="cart-badge-counter" id="cartBadgeCount" style="display:none;">0</span>
+        </div>
+        <span data-i18n="nav_cart">Panier</span>
+      </a>
+      <a href="profile.html" class="nav-bar-item">
+        <i data-lucide="circle-user"></i>
+        <span data-i18n="nav_profile">Profil</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- ============ SIDE DRAWER MENU ============ -->
+  <div class="drawer-overlay hidden" id="drawerOverlay"></div>
+  <aside class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+      <div class="drawer-brand-area">
+        <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin:0;">Carrefour</h3>
+        <p style="font-size: 10px; opacity: 0.85; margin:0;">Navigation</p>
+      </div>
+      <button class="drawer-close-btn" id="closeDrawerBtn" aria-label="Fermer">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <nav class="drawer-menu-list">
+      <a href="index.html" class="drawer-item">
+        <i data-lucide="house"></i> <span data-i18n="nav_home">Accueil</span>
+      </a>
+      <div class="drawer-divider"></div>
+      
+      <a href="#" id="drawerPromo" class="drawer-item">
+        <i data-lucide="tag"></i> <span data-i18n="drawer_promo">Promotions & Offres</span>
+      </a>
+      <a href="my-orders.html" class="drawer-item">
+        <i data-lucide="shopping-bag"></i> <span data-i18n="drawer_orders">Mes Commandes</span>
+      </a>
+      <a href="#" id="drawerCategories" class="drawer-item">
+        <i data-lucide="layout-grid"></i> <span data-i18n="drawer_categories">Rayons Carrefour</span>
+      </a>
+      <a href="#" id="drawerCatalogue" class="drawer-item">
+        <i data-lucide="book-open"></i> <span data-i18n="drawer_catalogue">Catalogue de la Semaine</span>
+      </a>
+      
+      <div class="drawer-divider"></div>
+      
+      <a href="rewards.html" class="drawer-item">
+        <i data-lucide="credit-card"></i> <span data-i18n="drawer_rewards">Carte de Fidélité</span>
+      </a>
+      <a href="#" id="drawerSettingsBtn" class="drawer-item">
+        <i data-lucide="settings"></i> <span data-i18n="drawer_settings">Paramètres</span>
+      </a>
+      <a href="https://wa.me/212600000000" target="_blank" class="drawer-item">
+        <i data-lucide="headphones"></i> <span data-i18n="drawer_support">Aide & Support</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ============ SETTINGS MODAL ============ -->
+  <div class="modal-overlay-backdrop hidden" id="settingsModal">
+    <div class="modal-card-sheet">
+      <div class="modal-sheet-header">
+        <h3 data-i18n="settings_title">Paramètres</h3>
+        <button class="close-sheet-btn" id="closeSettingsModal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-sheet-body">
+        
+        <div class="setting-option-row">
+          <div class="opt-label"><i data-lucide="globe"></i> <span data-i18n="settings_lang">Langue</span></div>
+          <select id="languageSelect" class="styled-select-box">
+            <option value="fr">Français</option>
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <div class="setting-option-row">
+          <div class="opt-label"><i data-lucide="moon"></i> <span data-i18n="settings_dark">Mode Sombre</span></div>
+          <label class="switch-toggle-ios">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider-ios"></span>
+          </label>
+        </div>
+
+        <div class="app-version-info">
+          <span>Quickly v1.6.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="carrefour.js"></script>
+</body>
+</html>

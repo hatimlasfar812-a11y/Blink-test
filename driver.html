@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Blink Driver — تطبيق شركاء التوصيل لإدارة الطلبات والرحلات والأرباح.">
+  <title>Blink Driver | Partner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+  <link rel="stylesheet" href="driver.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="appLoader" class="app-loader">
+    <div class="loader-content">
+      <div class="loader-logo">Blink</div>
+      <div class="loader-spinner"></div>
+      <p>جاري تحميل التطبيق...</p>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <section id="view-login" class="view login-view active">
+    <div class="login-container">
+      <div class="login-brand">
+        <div class="brand-logo">Blink</div>
+        <p>Driver Partner</p>
+      </div>
+      <div class="login-heading">
+        <h1>مرحباً بعودتك</h1>
+        <p>سجل الدخول للبدء في استقبال الطلبات</p>
+      </div>
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">البريد الإلكتروني</label>
+          <input type="email" id="loginEmail" placeholder="example@email.com" required autocomplete="email" inputmode="email">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">كلمة المرور</label>
+          <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
+        </div>
+        <p id="loginError" class="error-message" role="alert"></p>
+        <button type="submit" id="loginBtn" class="primary-btn">تسجيل الدخول</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- MAIN APP -->
+  <div id="mainApp" class="main-app hidden">
+
+    <header class="app-header">
+      <button type="button" id="menuToggleBtn" class="icon-btn" aria-label="القائمة"><i data-lucide="menu"></i></button>
+      <div class="header-brand">
+        <span class="header-logo">Blink</span>
+        <span id="headerTitle">الرئيسية</span>
+      </div>
+      <button type="button" id="notifBtn" class="icon-btn relative" aria-label="الإشعارات">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" class="notif-badge hidden">0</span>
+      </button>
+    </header>
+
+    <div id="sideMenuOverlay" class="side-menu-overlay hidden"></div>
+    <aside id="sideMenu" class="side-menu" aria-hidden="true">
+      <div class="side-menu-header">
+        <button type="button" id="closeMenuBtn" class="icon-btn" aria-label="إغلاق"><i data-lucide="x"></i></button>
+        <div class="menu-profile">
+          <img id="menuAvatar" src="" alt="صورة السائق">
+          <div>
+            <h3 id="menuName">السائق</h3>
+            <p id="menuPhone">—</p>
+          </div>
+        </div>
+      </div>
+      <nav class="side-nav">
+        <a href="#" class="nav-link active" data-target="view-home"><i data-lucide="house"></i><span>الرئيسية</span></a>
+        <a href="#" class="nav-link" data-target="view-orders-active"><i data-lucide="package"></i><span>الطلب الحالي</span></a>
+        <a href="#" class="nav-link" data-target="view-history"><i data-lucide="history"></i><span>سجل الطلبات</span></a>
+        <a href="#" class="nav-link" data-target="view-earnings"><i data-lucide="wallet"></i><span>الأرباح</span></a>
+        <a href="#" class="nav-link" data-target="view-profile"><i data-lucide="user-round"></i><span>حسابي</span></a>
+        <a href="#" class="nav-link" data-target="view-settings"><i data-lucide="settings"></i><span>الإعدادات</span></a>
+      </nav>
+      <div class="side-menu-bottom">
+        <button type="button" id="logoutBtn" class="logout-btn"><i data-lucide="log-out"></i><span>تسجيل الخروج</span></button>
+      </div>
+    </aside>
+
+    <div id="notificationsOverlay" class="side-menu-overlay hidden"></div>
+    <div id="notificationsPanel" class="notifications-panel" aria-hidden="true">
+      <div class="notif-header">
+        <h3>الإشعارات</h3>
+        <button id="closeNotifPanel" class="icon-btn" aria-label="إغلاق"><i data-lucide="x"></i></button>
+      </div>
+      <div id="notificationsList" class="notif-list">
+        <div class="empty-state"><i data-lucide="bell-off"></i><p>لا توجد إشعارات</p></div>
+      </div>
+    </div>
+
+    <main class="app-content">
+
+      <!-- HOME -->
+      <section id="view-home" class="view active">
+        <div id="audioPromptBtn" class="audio-prompt" role="button" tabindex="0">
+          <i data-lucide="volume-2"></i> اضغط هنا لتفعيل صوت استقبال الطلبات
+        </div>
+
+        <div id="warningBanner" class="warning-banner hidden">
+          <div class="warning-icon"><i data-lucide="alert-triangle"></i></div>
+          <div class="warning-text">
+            <strong>تنبيه من الإدارة</strong>
+            <p id="warningMessageText">—</p>
+          </div>
+        </div>
+
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">مرحباً بك في Blink</p>
+            <h1>أهلاً <span id="driverNameHome">بالسائق</span></h1>
+          </div>
+          <div class="driver-status">
+            <span id="statusText">غير متصل</span>
+            <label class="switch">
+              <input type="checkbox" id="onlineToggle" aria-label="حالة الاتصال">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="welcome-card">
+          <div>
+            <p>حالة العمل</p>
+            <h2 id="welcomeHeadline">استعد لاستقبال الطلبات</h2>
+            <span id="welcomeSub">قم بتفعيل حالة الاتصال لتكون متاحاً</span>
+          </div>
+          <div class="welcome-icon"><i data-lucide="bike"></i></div>
+        </div>
+
+        <div class="section-heading"><h2>ملخص اليوم</h2></div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="wallet"></i></div>
+            <p>أرباح اليوم</p>
+            <h3 id="homeTodayEarnings">0.00 DH</h3>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="package-check"></i></div>
+            <p>طلبات اليوم</p>
+            <h3 id="homeTodayOrders">0</h3>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="star"></i></div>
+            <p>التقييم</p>
+            <h3 id="homeRating">—</h3>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <h2>الطلب الحالي</h2>
+          <button type="button" class="text-btn" onclick="goToView('view-orders-active')">عرض التفاصيل</button>
+        </div>
+        <div id="activeOrderWidget" class="active-order-widget">
+          <div class="empty-state" id="homeEmptyState">
+            <div class="empty-icon"><i data-lucide="package-open"></i></div>
+            <h3>لا يوجد طلب نشط</h3>
+            <p>ستظهر هنا تفاصيل الطلب عندما يتم إسناده إليك</p>
+          </div>
+          <div class="active-order-summary hidden" id="activeOrderSummary">
+            <div class="order-summary-top">
+              <div>
+                <span class="muted-text">المطعم</span>
+                <h3 id="activeOrderRest">—</h3>
+              </div>
+              <span id="activeOrderStatus" class="status-badge">—</span>
+            </div>
+            <div class="order-summary-bottom">
+              <span>قيمة الطلب</span>
+              <strong id="activeOrderPrice">0.00 DH</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OFFER SCREEN -->
+      <section id="view-offer" class="view">
+        <div class="offer-page">
+          <div class="offer-alert-icon"><i data-lucide="bell-ring"></i></div>
+          <p class="offer-eyebrow">طلب توصيل جديد</p>
+          <h1>لديك طلب جديد!</h1>
+          <p class="muted-text">راجع معلومات الطلب قبل اتخاذ القرار</p>
+
+          <div class="offer-timer">
+            <svg viewBox="0 0 100 100" class="timer-svg">
+              <circle class="timer-track" cx="50" cy="50" r="43"></circle>
+              <circle id="timerPath" class="timer-progress" cx="50" cy="50" r="43"></circle>
+            </svg>
+            <span id="timerText">30</span>
+          </div>
+
+          <div class="offer-card">
+            <div class="offer-restaurant">
+              <div class="offer-restaurant-icon"><i data-lucide="utensils"></i></div>
+              <div>
+                <p>المطعم</p>
+                <h2 id="offerRest">—</h2>
+              </div>
+            </div>
+            <div class="offer-price-box">
+              <p>رسوم التوصيل</p>
+              <strong id="offerPrice">0.00 DH</strong>
+            </div>
+          </div>
+
+          <div class="offer-actions">
+            <button type="button" id="acceptOfferBtn" class="primary-btn"><i data-lucide="check"></i> قبول الطلب</button>
+            <button type="button" id="rejectOfferBtn" class="secondary-btn"><i data-lucide="x"></i> رفض الطلب</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVE ORDERS -->
+      <section id="view-orders-active" class="view">
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">إدارة التوصيل</p>
+            <h1>الطلب الحالي</h1>
+          </div>
+        </div>
+        <div id="map-container" class="map-container hidden">
+          <div class="map-topbar">
+            <div class="map-heading"><strong>الخريطة المباشرة</strong><span id="mapGpsStatus" class="map-gps-status">في انتظار GPS</span></div>
+            <div class="map-tools">
+              <button type="button" id="mapMyLocationBtn" class="map-tool-btn" aria-label="موقعي الآن"><i data-lucide="locate-fixed"></i></button>
+              <button type="button" id="mapExpandBtn" class="map-tool-btn map-expand-btn" aria-label="تكبير الخريطة"><i data-lucide="maximize-2"></i><span>تكبير الخريطة</span></button>
+            </div>
+          </div>
+          <div id="map"></div>
+          <div class="map-legend"><span><i class="legend-dot legend-driver"></i>أنت</span><span><i class="legend-dot legend-restaurant"></i>المطعم</span><span><i class="legend-dot legend-customer"></i>الزبون</span></div>
+        </div>
+        <div id="activeOrdersList" class="active-orders-list">
+          <div class="empty-state">
+            <div class="empty-icon"><i data-lucide="map-pin"></i></div>
+            <h3>لا يوجد طلب نشط حالياً</h3>
+            <p>عندما تقبل طلباً سيظهر مساره وتفاصيله هنا</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORDER DETAILS -->
+      <section id="view-order-details" class="view">
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">معلومات التوصيل</p>
+            <h1>تفاصيل الطلب</h1>
+          </div>
+          <button type="button" class="icon-btn" aria-label="رجوع" onclick="goToView('view-orders-active')"><i data-lucide="arrow-right"></i></button>
+        </div>
+        <div class="details-card">
+          <div class="detail-row"><span>رقم الطلب</span><strong id="detOrderId">—</strong></div>
+          <div class="detail-row"><span>الحالة</span><strong id="detStatus">—</strong></div>
+        </div>
+        <div class="details-card">
+          <h3>معلومات المطعم</h3>
+          <div class="detail-row"><span>اسم المطعم</span><strong id="detRestName">—</strong></div>
+          <div class="detail-row"><span>عنوان المطعم</span><strong id="detRestAddress">—</strong></div>
+          <div class="action-row">
+            <button type="button" id="navToRestBtn" class="secondary-btn hidden"><i data-lucide="map"></i> توجّه للمطعم</button>
+            <a id="callRestBtn" href="#" class="icon-btn secondary-btn hidden" aria-label="اتصال بالمطعم"><i data-lucide="phone"></i></a>
+          </div>
+        </div>
+        <div class="details-card">
+          <h3>معلومات العميل</h3>
+          <div class="detail-row"><span>اسم العميل</span><strong id="detCustomerName">—</strong></div>
+          <div class="detail-row"><span>عنوان التوصيل</span><strong id="detCustomerAddress">—</strong></div>
+          <div class="action-row">
+            <button type="button" id="navToCustBtn" class="primary-btn hidden"><i data-lucide="navigation"></i> توجّه للعميل</button>
+            <a id="callCustBtn" href="#" class="icon-btn secondary-btn hidden" aria-label="اتصال بالعميل"><i data-lucide="phone"></i></a>
+            <a id="waCustBtn" href="#" class="icon-btn secondary-btn hidden" aria-label="مراسلة العميل عبر واتساب"><i data-lucide="message-circle"></i></a>
+          </div>
+        </div>
+        <button type="button" id="actionUpdateStatus" class="primary-btn" style="margin-top: 8px;">تحديث حالة الطلب</button>
+      </section>
+
+      <!-- HISTORY -->
+      <section id="view-history" class="view">
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">سجل التوصيلات</p>
+            <h1>طلباتي السابقة</h1>
+          </div>
+        </div>
+        <div id="historyList" class="history-list">
+          <div class="empty-state"><i data-lucide="history"></i><p>لا توجد طلبات سابقة</p></div>
+        </div>
+      </section>
+
+      <!-- EARNINGS -->
+      <section id="view-earnings" class="view">
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">ملخصك المالي</p>
+            <h1>الأرباح</h1>
+          </div>
+        </div>
+        <div class="earnings-tabs">
+          <button type="button" class="tab-btn active" data-period="today">اليوم</button>
+          <button type="button" class="tab-btn" data-period="week">الأسبوع</button>
+          <button type="button" class="tab-btn" data-period="month">الشهر</button>
+        </div>
+        <div class="earnings-total-card">
+          <p id="earningsLabel">إجمالي أرباح اليوم</p>
+          <h2 id="totalEarnings">0.00 DH</h2>
+          <span>حسب البيانات المسجلة من قاعدة البيانات</span>
+        </div>
+        <div class="section-heading"><h2>الأداء (آخر 7 أيام)</h2></div>
+        <div class="chart-card"><canvas id="earningsChart"></canvas></div>
+        <div class="section-heading"><h2>التفاصيل</h2></div>
+        <div id="earningsBreakdownList" class="earnings-breakdown-list">
+          <div class="empty-state"><i data-lucide="wallet"></i><p>لا توجد أرباح لعرضها حالياً</p></div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="view-profile" class="view">
+        <div class="page-heading">
+          <div>
+            <p class="muted-text">معلوماتك الشخصية</p>
+            <h1>حسابي</h1>
+          </div>
+        </div>
+        <div class="profile-card">
+          <img id="profileAvatar" src="" alt="صورة السائق">
+          <h2 id="profileName">جاري تحميل بيانات السائق...</h2>
+          <p id="profilePhone">—</p>
+          <p class="profile-driver-code">رقم السائق: <strong id="profileDriverId">—</strong></p>
+          <div class="profile-rating"><i data-lucide="star"></i> <span id="profileRating">لا يوجد تقييم بعد</span></div>
+          <p id="verificationStatus" class="verification-status">حالة التحقق غير معروفة</p>
+        </div>
+        <div class="settings-list">
+          <a href="#" class="setting-row" onclick="event.preventDefault(); goToView('view-edit-profile')">
+            <span class="setting-icon"><i data-lucide="user-round-pen"></i></span><span>تعديل المعلومات الشخصية</span><i data-lucide="chevron-left"></i>
+          </a>
+          <a href="#" class="setting-row" onclick="event.preventDefault(); goToView('view-vehicle')">
+            <span class="setting-icon"><i data-lucide="bike"></i></span><span>معلومات المركبة</span><i data-lucide="chevron-left"></i>
+          </a>
+          <a href="#" class="setting-row" onclick="event.preventDefault(); goToView('view-documents')">
+            <span class="setting-icon"><i data-lucide="file-text"></i></span><span>الوثائق</span><i data-lucide="chevron-left"></i>
+          </a>
+        </div>
+      </section>
+
+      <section id="view-edit-profile" class="view">
+        <div class="page-heading">
+          <div><p class="muted-text">إعدادات الحساب</p><h1>تعديل المعلومات</h1></div>
+          <button type="button" class="icon-btn" aria-label="رجوع" onclick="goToView('view-profile')"><i data-lucide="arrow-right"></i></button>
+        </div>
+        <form id="editProfileForm">
+          <div class="form-group"><label for="editName">الاسم الكامل</label><input type="text" id="editName" required autocomplete="name"></div>
+          <div class="form-group"><label for="editPhone">رقم الهاتف</label><input type="tel" id="editPhone" required autocomplete="tel" inputmode="tel"></div>
+          <button type="submit" class="primary-btn" id="saveProfileBtn">حفظ التغييرات</button>
+        </form>
+      </section>
+
+      <section id="view-vehicle" class="view">
+        <div class="page-heading">
+          <div><p class="muted-text">معلومات العمل</p><h1>مركبتي</h1></div>
+          <button type="button" class="icon-btn" aria-label="رجوع" onclick="goToView('view-profile')"><i data-lucide="arrow-right"></i></button>
+        </div>
+        <div class="details-card">
+          <div class="detail-row"><span>نوع المركبة</span><strong id="vType">—</strong></div>
+          <div class="detail-row"><span>رقم التسجيل</span><strong id="vPlate">—</strong></div>
+        </div>
+      </section>
+
+      <section id="view-documents" class="view">
+        <div class="page-heading">
+          <div><p class="muted-text">وثائق الحساب</p><h1>الوثائق</h1></div>
+          <button type="button" class="icon-btn" aria-label="رجوع" onclick="goToView('view-profile')"><i data-lucide="arrow-right"></i></button>
+        </div>
+        <div class="details-card">
+          <div class="document-row">
+            <div><h3>بطاقة التعريف الوطنية</h3><p>وثيقة التحقق من هوية السائق</p></div>
+            <div class="document-actions"><span id="docCin">—</span><a id="docCinLink" class="text-btn hidden" href="#" target="_blank" rel="noopener">عرض الوثيقة</a></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="page-heading">
+          <div><p class="muted-text">تفضيلات التطبيق</p><h1>الإعدادات</h1></div>
+        </div>
+        <div class="settings-list">
+          <div class="setting-row">
+            <span class="setting-icon"><i data-lucide="moon"></i></span><span>الوضع الداكن</span>
+            <label class="switch"><input type="checkbox" id="darkModeToggle" aria-label="الوضع الداكن"><span class="switch-slider"></span></label>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <nav class="bottom-nav">
+      <button type="button" class="nav-item bottom-nav-item active" data-target="view-home"><i data-lucide="house"></i><span>الرئيسية</span></button>
+      <button type="button" class="nav-item bottom-nav-item" data-target="view-orders-active"><i data-lucide="package"></i><span>الطلب</span></button>
+      <button type="button" class="nav-item bottom-nav-item" data-target="view-earnings"><i data-lucide="wallet"></i><span>الأرباح</span></button>
+      <button type="button" class="nav-item bottom-nav-item" data-target="view-profile"><i data-lucide="user-round"></i><span>حسابي</span></button>
+    </nav>
+  </div>
+
+  <!-- REJECT REASON MODAL -->
+  <div id="rejectReasonModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 class="modal-title">سبب رفض الطلب</h3>
+      <div class="modal-options">
+        <button type="button" class="reject-reason-btn" data-reason="too_far">المسافة بعيدة</button>
+        <button type="button" class="reject-reason-btn" data-reason="too_busy">مشغول حالياً</button>
+        <button type="button" class="reject-reason-btn" data-reason="wrong_location">موقع خاطئ</button>
+        <button type="button" class="reject-reason-btn" data-reason="other">سبب آخر</button>
+      </div>
+      <button type="button" class="cancel-reject-btn">إلغاء</button>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
+
+  <script type="module" src="driver.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

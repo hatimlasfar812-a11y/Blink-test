@@ -1,0 +1,436 @@
+/* =====================================================
+   QUICKLY — MENU & PRODUCT MODAL DESIGN SYSTEM
+===================================================== */
+:root {
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-soft: #ECFDF5;
+  --bg: #F9FAFB;
+  --surface: #FFFFFF;
+  --surface-muted: #F3F4F6;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --border: #E5E7EB;
+  --danger: #EF4444;
+  
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] {
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --primary-soft: rgba(16, 185, 129, 0.1);
+  --bg: #111827;
+  --surface: #1F2937;
+  --surface-muted: #374151;
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --border: #374151;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   CATEGORIES TABS
+===================================================== */
+#restaurantCategories {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+#restaurantCategories::-webkit-scrollbar { display: none; }
+
+.category-btn {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 16px 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.category-btn:hover, .category-btn.active {
+  color: var(--primary);
+}
+.category-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--primary);
+}
+
+/* =====================================================
+   MENU LIST & CARDS
+===================================================== */
+#restaurantMenu {
+  padding: 16px;
+  background: var(--bg);
+  min-height: calc(100vh - 60px);
+}
+
+.menu-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.menu-card:active { transform: scale(0.98); border-color: var(--primary); }
+
+.food-info { flex: 1; min-width: 0; }
+.food-info h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+.food-info p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.food-info h4 {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.food-image {
+  width: 90px;
+  height: 90px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  background: var(--surface-muted);
+}
+.food-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.product-plus {
+  position: absolute;
+  inset-inline-end: 6px;
+  bottom: 6px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+.product-plus:active { transform: scale(0.9); }
+
+/* حالة عدم وجود منتجات */
+.empty-state, .error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+.error-state { color: var(--danger); }
+
+/* =====================================================
+   PRODUCT MODAL (Bottom Sheet)
+===================================================== */
+.product-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: none;
+  justify-content: center;
+  align-items: flex-end;
+}
+.product-modal.active { display: flex; }
+
+.product-sheet {
+  background: var(--surface);
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Modal Image */
+.pm-image-wrap {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  background: var(--surface-muted);
+  flex-shrink: 0;
+}
+.pm-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pm-close-btn {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  width: 36px;
+  height: 36px;
+  background: var(--surface);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+  transition: transform 0.2s;
+}
+.pm-close-btn:active { transform: scale(0.9); }
+.pm-close-btn svg { width: 20px; height: 20px; }
+
+/* Modal Content */
+.pm-content {
+  padding: 20px;
+  flex: 1;
+}
+
+.pm-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.pm-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Options Accordion */
+.pm-option-group {
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.pm-option-group summary {
+  list-style: none;
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pm-option-group summary::-webkit-details-marker { display: none; }
+
+/* أيقونة السهم للأسفل (Lucide-style SVG) */
+.pm-option-group summary::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.2s;
+}
+[data-theme="dark"] .pm-option-group summary::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.pm-option-group[open] summary::after { transform: rotate(180deg); }
+
+.pm-option-list { padding: 4px 16px; }
+
+.pm-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.pm-option-item:last-child { border-bottom: none; }
+
+.pm-option-left { display: flex; align-items: center; gap: 12px; }
+.pm-option-left input[type="radio"], 
+.pm-option-left input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+.pm-option-left span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.pm-option-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Modal Footer (Sticky) */
+.pm-footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 10;
+}
+
+.pm-add-btn {
+  flex: 1;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, background 0.2s;
+}
+.pm-add-btn:active { transform: scale(0.98); }
+.pm-add-btn span:last-child {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+}
+
+/* =====================================================
+   SKELETON LOADING (الهياكل العظمية)
+===================================================== */
+.skeleton-card {
+  pointer-events: none;
+  background: var(--surface);
+}
+.sk-line, .sk-img {
+  background: var(--surface-muted);
+  border-radius: 6px;
+  animation: pulse 1.5s infinite;
+}
+.sk-line { height: 12px; margin-bottom: 10px; }
+.sk-line.w-60 { width: 60%; }
+.sk-line.w-80 { width: 80%; }
+.sk-line.w-40 { width: 40%; height: 16px; }
+.sk-img { width: 90px; height: 90px; border-radius: var(--radius-md); flex-shrink: 0; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =====================================================
+   TOAST NOTIFICATION
+===================================================== */
+.menu-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translate(-50%, 20px);
+  background: var(--text-primary);
+  color: var(--surface);
+  width: max-content;
+  max-width: min(92vw, 440px);
+  padding: 13px 18px;
+  border-radius: 16px;
+  text-align: center;
+  line-height: 1.55;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+  z-index: 10000;
+}
+.menu-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.menu-toast.error {
+  background: #7C2D12;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(124,45,18,.22);
+}
+
+/* =====================================================
+   RTL SUPPORT
+===================================================== */
+[dir="rtl"] .product-plus { inset-inline-end: auto; inset-inline-start: 6px; }

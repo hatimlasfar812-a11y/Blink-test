@@ -1,0 +1,80 @@
+/* BLINK — CHECKOUT PAGE | Green & White UI */
+:root{
+ color-scheme:light;--primary:#059669;--primary-strong:#047857;--primary-soft:#ECFDF5;
+ --bg:#F6F8F7;--surface:#fff;--surface-soft:#F8FAF9;--text:#17211D;--muted:#68756F;
+ --line:#E6ECE8;--danger:#DC5454;--radius:19px;--shadow:0 8px 28px rgba(20,55,39,.06)
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);scroll-behavior:smooth}
+body{font-family:'Cairo','Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);padding-bottom:105px;line-height:1.55;min-height:100vh}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+
+/* Header */
+.top-header{position:sticky;top:0;z-index:100;min-height:calc(62px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 16px 0;background:rgba(255,255,255,.96);display:flex;align-items:center;border-bottom:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top-header .back-btn{width:41px;height:41px;flex:0 0 41px;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:14px;display:grid;place-items:center}
+.top-header .back-btn svg{width:20px;height:20px}
+.top-header h2{margin-inline-start:13px;font-size:17px;font-weight:900;letter-spacing:-.25px}
+
+/* Content */
+.container{width:min(100% - 24px,620px);margin:0 auto;padding:17px 0 25px;display:flex;flex-direction:column;gap:13px}
+.card{padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card h3{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:14px;font-weight:900;color:var(--text)}
+.card h3 svg{width:19px;height:19px;flex:0 0 19px;color:var(--primary)}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.card-header h3{margin:0}
+.btn-change-addr{flex:0 0 auto;border:1px solid #CDEBDD;background:var(--primary-soft);color:var(--primary-strong);padding:8px 12px;border-radius:11px;font-size:12px;font-weight:900}
+.address-text{padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft);color:#42534A;font-size:13px;line-height:1.7;overflow-wrap:anywhere;min-height:45px}
+.styled-textarea{display:block;width:100%;min-height:88px;padding:12px 13px;resize:vertical;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft);color:var(--text);font-size:13px;line-height:1.6;outline:none}
+.styled-textarea::placeholder{color:#9AA59F}
+.styled-textarea:focus,.coupon-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(5,150,105,.09);background:#fff}
+
+/* Order rows */
+.order-items-list{display:flex;flex-direction:column;gap:0}
+.order-item-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid #EEF2EF;font-size:13px}
+.order-item-row:first-child{padding-top:0}
+.order-item-row:last-child{border-bottom:0;padding-bottom:0}
+.order-item-name{font-weight:700;color:#34443B;line-height:1.55;overflow-wrap:anywhere}
+.order-item-price{flex:0 0 auto;color:var(--primary-strong);font-weight:900;white-space:nowrap}
+
+/* Payment */
+.payment-option{display:flex;align-items:center;gap:12px;margin-top:9px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--surface-soft);cursor:pointer;transition:border-color .18s,background .18s}
+.payment-option:first-of-type{margin-top:0}
+.payment-option.active,.payment-option:has(input:checked){border-color:#9BD9BA;background:var(--primary-soft)}
+.payment-option input{width:18px;height:18px;flex:0 0 18px;accent-color:var(--primary)}
+.pay-info{min-width:0}
+.pay-info strong{display:block;color:var(--text);font-size:13px;font-weight:900}
+.pay-info p{margin-top:3px;color:var(--muted);font-size:11px;line-height:1.5}
+.payment-option.disabled{opacity:.62;cursor:not-allowed}
+.coming-badge{display:inline-block;margin-top:4px;padding:3px 8px;border-radius:999px;background:#EEF2EF;color:#738078;font-size:10px;font-weight:800}
+
+/* Coupon */
+.coupon-box{display:flex;gap:8px}
+.coupon-box input{width:0;min-width:0;flex:1;height:45px;padding:0 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft);color:var(--text);outline:none;font-size:13px}
+.coupon-box input::placeholder{color:#9AA59F}
+.coupon-box button{width:94px;flex:0 0 94px;border:0;border-radius:12px;background:#E9EFEB;color:#7A8981;font-size:12px;font-weight:900;cursor:not-allowed}
+.coupon-msg{display:block;margin-top:8px;color:var(--muted);font-size:11px;line-height:1.5}
+
+/* Price summary */
+.price-card{padding:18px}
+.price-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:9px 0;color:var(--muted);font-size:13px;font-weight:600}
+.price-row b{color:#34443B;font-weight:800;white-space:nowrap}
+.price-divider{height:0;border:0;border-top:1px dashed #D9E4DD;margin:14px 0}
+.price-row.total-row{margin:0;color:var(--text);font-size:15px;font-weight:900}
+.price-row.total-row b{color:var(--primary-strong);font-size:21px;font-weight:900}
+.discount-row span,.discount-row b{color:var(--primary-strong)}
+
+/* Sticky CTA */
+.bottom-bar{position:fixed;left:0;right:0;bottom:0;z-index:1000;width:100%;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -8px 25px rgba(20,55,39,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.btn-place-order{display:flex;align-items:center;justify-content:center;width:min(100%,620px);min-height:52px;margin:0 auto;border:0;border-radius:15px;background:var(--primary);color:#fff;font-size:15px;font-weight:900;box-shadow:0 7px 17px rgba(5,150,105,.2);transition:background .18s,transform .18s}
+.btn-place-order:hover{background:var(--primary-strong)}
+.btn-place-order:active{transform:scale(.99)}
+.btn-place-order:disabled{background:#DDE5E0;color:#87948D;box-shadow:none;cursor:not-allowed}
+
+/* Toast */
+.toast-notification{position:fixed;top:calc(76px + env(safe-area-inset-top,0px));left:50%;z-index:2000;width:max-content;max-width:calc(100% - 30px);padding:12px 17px;border-radius:14px;background:#1F2D26;color:#fff;font-size:12px;font-weight:800;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18);opacity:0;pointer-events:none;transform:translate(-50%,-10px);transition:opacity .2s,transform .2s}
+.toast-notification.show{opacity:1;transform:translate(-50%,0)}
+[dir="rtl"] .top-header .back-btn svg{transform:scaleX(-1)}
+@media(min-width:760px){.container{padding-top:24px;gap:15px}.card{padding:20px}.top-header{padding-left:max(22px,calc((100vw - 620px)/2));padding-right:max(22px,calc((100vw - 620px)/2))}}
+@media(max-width:360px){.container{width:calc(100% - 18px)}.card{padding:14px}.top-header h2{font-size:15px}.coupon-box button{width:82px;flex-basis:82px}}
